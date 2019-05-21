@@ -50,6 +50,7 @@ static int luaC_lunum_asin(lua_State *L);
 static int luaC_lunum_acos(lua_State *L);
 static int luaC_lunum_atan(lua_State *L);
 
+#ifndef LUNUM_API_NOCOMPLEX
 static int luaC_lunum_sinh(lua_State *L);
 static int luaC_lunum_cosh(lua_State *L);
 static int luaC_lunum_tanh(lua_State *L);
@@ -57,6 +58,7 @@ static int luaC_lunum_tanh(lua_State *L);
 static int luaC_lunum_asinh(lua_State *L);
 static int luaC_lunum_acosh(lua_State *L);
 static int luaC_lunum_atanh(lua_State *L);
+#endif // LUNUM_API_NOCOMPLEX
 
 static int luaC_lunum_exp(lua_State *L);
 static int luaC_lunum_log(lua_State *L);
@@ -82,6 +84,7 @@ static int luaC_array__unm(lua_State *L);
 static int luaC_array__gc(lua_State *L);
 
 
+#ifndef LUNUM_API_NOCOMPLEX
 static int luaC_complex__tostring(lua_State *L);
 static int luaC_complex__add(lua_State *L);
 static int luaC_complex__sub(lua_State *L);
@@ -92,13 +95,15 @@ static int luaC_complex__unm(lua_State *L);
 static int luaC_complex__eq(lua_State *L);
 static int luaC_complex__lt(lua_State *L);
 static int luaC_complex__le(lua_State *L);
-
+#endif // LUNUM_API_NOCOMPLEX
 
 static int   _array_binary_op1(lua_State *L, enum ArrayOperation op);
 static int   _array_binary_op2(lua_State *L, enum ArrayOperation op);
 
+#ifndef LUNUM_API_NOCOMPLEX
 static int _complex_binary_op1(lua_State *L, enum ArrayOperation op);
 static int _complex_binary_op2(lua_State *L, enum ArrayOperation op);
+#endif // LUNUM_API_NOCOMPLEX
 
 static void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex),
 			int cast);
@@ -111,7 +116,28 @@ static int _get_index(lua_State *L, struct Array *A);
 // -----------------------------------------------------------------------------
 static double rconj(double x) { return x; }   // conj, but for real argument
 static double runm(double x) { return -x; }   // unary minus, real
+
+#ifndef LUNUM_API_NOCOMPLEX
 static Complex cunm(Complex z) { return -z; } // unary minus, complex
+#else
+static void cunm(void) { }
+static void csin(void) { }
+static void ccos(void) { }
+static void ctan(void) { }
+static void casin(void) { }
+static void cacos(void) { }
+static void catan(void) { }
+static void csinh(void) { }
+static void ccosh(void) { }
+static void ctanh(void) { }
+static void casinh(void) { }
+static void cacosh(void) { }
+static void catanh(void) { }
+static void cexp(void) { }
+static void clog(void) { }
+static void conj(void) { }
+
+#endif // LUNUM_API_NOCOMPLEX
 // -----------------------------------------------------------------------------
 
 
@@ -138,7 +164,7 @@ int luaopen_lunum(lua_State *L)
   LUA_NEW_METAMETHOD(L, array, gc);
   lua_pop(L, 1);
 
-
+#ifndef LUNUM_API_NOCOMPLEX
   // Create the 'complex' metatable
   // ---------------------------------------------------------------------------
   luaL_newmetatable(L, "complex");
@@ -153,7 +179,7 @@ int luaopen_lunum(lua_State *L)
   LUA_NEW_METAMETHOD(L, complex, lt);
   LUA_NEW_METAMETHOD(L, complex, le);
   lua_pop(L, 1);
-
+#endif // LUNUM_API_NOCOMPLEX
 
   // Create the 'lunum' table
   // ---------------------------------------------------------------------------
@@ -171,6 +197,7 @@ int luaopen_lunum(lua_State *L)
   LUA_NEW_MODULEMETHOD(L, lunum, acos);
   LUA_NEW_MODULEMETHOD(L, lunum, atan);
 
+#ifndef LUNUM_API_NOCOMPLEX
   LUA_NEW_MODULEMETHOD(L, lunum, sinh);
   LUA_NEW_MODULEMETHOD(L, lunum, cosh);
   LUA_NEW_MODULEMETHOD(L, lunum, tanh);
@@ -178,6 +205,7 @@ int luaopen_lunum(lua_State *L)
   LUA_NEW_MODULEMETHOD(L, lunum, asinh);
   LUA_NEW_MODULEMETHOD(L, lunum, acosh);
   LUA_NEW_MODULEMETHOD(L, lunum, atanh);
+#endif // LUNUM_API_NOCOMPLEX
 
   LUA_NEW_MODULEMETHOD(L, lunum, exp);
   LUA_NEW_MODULEMETHOD(L, lunum, log);
@@ -197,11 +225,13 @@ int luaopen_lunum(lua_State *L)
   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_LONG   , long);
   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_FLOAT  , float);
   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_DOUBLE , double);
+#ifndef LUNUM_API_NOCOMPLEX
   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_COMPLEX, complex);
 
   // Register the purely imaginary number 'I'
   lunum_pushcomplex(L, I);
   lua_setfield(L, 1, "I");
+#endif // LUNUM_API_NOCOMPLEX
 
   lua_setglobal(L, "lunum");
 #include "array_class.lc" // sets the lunum.__array_methods table
@@ -242,10 +272,12 @@ int luaC_array__tostring(lua_State *L)
     case ARRAY_TYPE_LONG    : sprintf(s, "%ld", ((long   *)A->data)[n]); break;
     case ARRAY_TYPE_FLOAT   : sprintf(s, "%g" , ((float  *)A->data)[n]); break;
     case ARRAY_TYPE_DOUBLE  : sprintf(s, "%g" , ((double *)A->data)[n]); break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : sprintf(s, "%g%s%gj",
                                       creal(((Complex*)A->data)[n]),
                                       cimag(((Complex*)A->data)[n]) >= 0.0 ? "+" : "-",
                                       fabs(cimag(((Complex*)A->data)[n]))); break;
+#endif // LUNUM_API_NOCOMPLEX
     }
 
     if (n == A->size-1) {
@@ -416,6 +448,7 @@ int _array_binary_op2(lua_State *L, enum ArrayOperation op)
 // Implementation of lunum.complex metatable
 //
 // *****************************************************************************
+#ifndef LUNUM_API_NOCOMPLEX
 int luaC_complex__tostring(lua_State *L)
 {
   Complex z = *((Complex*) luaL_checkudata(L, 1, "complex"));
@@ -499,6 +532,7 @@ int _complex_binary_op2(lua_State *L, enum ArrayOperation op)
 }
 
 
+#endif // LUNUM_API_NOCOMPLEX
 
 
 
@@ -644,6 +678,7 @@ int luaC_lunum_asin(lua_State *L) { _unary_func(L, asin, casin, 1); return 1; }
 int luaC_lunum_acos(lua_State *L) { _unary_func(L, acos, cacos, 1); return 1; }
 int luaC_lunum_atan(lua_State *L) { _unary_func(L, atan, catan, 1); return 1; }
 
+#ifndef LUNUM_API_NOCOMPLEX
 int luaC_lunum_sinh(lua_State *L) { _unary_func(L, sinh, csinh, 1); return 1; }
 int luaC_lunum_cosh(lua_State *L) { _unary_func(L, cosh, ccosh, 1); return 1; }
 int luaC_lunum_tanh(lua_State *L) { _unary_func(L, tanh, ctanh, 1); return 1; }
@@ -651,6 +686,7 @@ int luaC_lunum_tanh(lua_State *L) { _unary_func(L, tanh, ctanh, 1); return 1; }
 int luaC_lunum_asinh(lua_State *L) { _unary_func(L, asinh, casinh, 1); return 1; }
 int luaC_lunum_acosh(lua_State *L) { _unary_func(L, acosh, cacosh, 1); return 1; }
 int luaC_lunum_atanh(lua_State *L) { _unary_func(L, atanh, catanh, 1); return 1; }
+#endif // LUNUM_API_NOCOMPLEX
 
 int luaC_lunum_exp(lua_State *L) { _unary_func(L, exp, cexp, 1); return 1; }
 int luaC_lunum_log(lua_State *L) { _unary_func(L, log, clog, 1); return 1; }
@@ -762,6 +798,7 @@ void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cas
     const double x = lua_tonumber(L, 1);
     lua_pushnumber(L, f(x));
   }
+#ifndef LUNUM_API_NOCOMPLEX
   else if (lunum_hasmetatable(L, 1, "complex")) {
 
     if (g == NULL) {
@@ -771,6 +808,7 @@ void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cas
     const Complex z = lunum_checkcomplex(L, 1);
     lunum_pushcomplex(L, g(z));
   }
+#endif // LUNUM_API_NOCOMPLEX
   else if (lunum_hasmetatable(L, 1, "array")) {
     struct Array *A = (struct Array*) lunum_checkarray1(L, 1);
 
@@ -785,7 +823,9 @@ void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cas
       case ARRAY_TYPE_LONG    : EXPR_EVALF(int    , B.size, B.data); break;
       case ARRAY_TYPE_FLOAT   : EXPR_EVALF(float  , B.size, B.data); break;
       case ARRAY_TYPE_DOUBLE  : EXPR_EVALF(double , B.size, B.data); break;
+#ifndef LUNUM_API_NOCOMPLEX
       case ARRAY_TYPE_COMPLEX : EXPR_EVALG(Complex, B.size, B.data); break;
+#endif // LUNUM_API_NOCOMPLEX
       }
 
       lunum_pusharray1(L, &B);
@@ -796,6 +836,7 @@ void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cas
       for (int i=0; i<B.size; ++i) b[i] = f(b[i]);
       lunum_pusharray1(L, &B);
     }
+#ifndef LUNUM_API_NOCOMPLEX
     else if (A->dtype == ARRAY_TYPE_COMPLEX) {
 
       if (g == NULL) {
@@ -807,6 +848,7 @@ void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cas
       for (int i=0; i<B.size; ++i) b[i] = g(b[i]);
       lunum_pusharray1(L, &B);
     }
+#endif // LUNUM_API_NOCOMPLEX
   }
 }
 
@@ -859,7 +901,9 @@ void _push_value(lua_State *L, enum ArrayType T, void *v)
   case ARRAY_TYPE_LONG    : lua_pushnumber (L,    *((long   *)v)); break;
   case ARRAY_TYPE_FLOAT   : lua_pushnumber (L,    *((float  *)v)); break;
   case ARRAY_TYPE_DOUBLE  : lua_pushnumber (L,    *((double *)v)); break;
+#ifndef LUNUM_API_NOCOMPLEX
   case ARRAY_TYPE_COMPLEX : lunum_pushcomplex (L, *((Complex*)v)); break;
+#endif // LUNUM_API_NOCOMPLEX
   }
 }
 

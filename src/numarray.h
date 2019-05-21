@@ -16,7 +16,9 @@ enum ArrayType {
   ARRAY_TYPE_LONG,
   ARRAY_TYPE_FLOAT,
   ARRAY_TYPE_DOUBLE,
+#ifndef LUNUM_API_NOCOMPLEX
   ARRAY_TYPE_COMPLEX,
+#endif // LUNUM_API_NOCOMPLEX
 };
 
 enum ArrayOperation {

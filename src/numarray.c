@@ -3,11 +3,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#ifndef LUNUM_API_NOCOMPLEX
 #include <complex.h>
+typedef double complex Complex;
+#endif // LUNUM_API_NOCOMPLEX
 #include "numarray.h"
 
 typedef unsigned char Bool;
-typedef double complex Complex;
+
 
 #define EXPR_ADD(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]+((T*)b)[i];}
 #define EXPR_SUB(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]-((T*)b)[i];}
@@ -32,7 +35,9 @@ char *array_typename(enum ArrayType T)
   case ARRAY_TYPE_LONG    : return "long";
   case ARRAY_TYPE_FLOAT   : return "float";
   case ARRAY_TYPE_DOUBLE  : return "double";
+#ifndef LUNUM_API_NOCOMPLEX
   case ARRAY_TYPE_COMPLEX : return "complex";
+#endif // LUNUM_API_COMPLEX
   }
   return NULL; // indicates invalid type
 }
@@ -47,7 +52,9 @@ enum ArrayType array_typeflag(char c)
   case 'l': return ARRAY_TYPE_LONG;
   case 'f': return ARRAY_TYPE_FLOAT;
   case 'd': return ARRAY_TYPE_DOUBLE;
+#ifndef LUNUM_API_NOCOMPLEX
   case 'z': return ARRAY_TYPE_COMPLEX;
+#endif // LUNUM_API_COMPLEX
   }
   return -1; // indicates invalid type
 }
@@ -75,7 +82,9 @@ struct Array array_new_zeros(int N, enum ArrayType T)
   case ARRAY_TYPE_LONG    : EXPR_ASSIGN0(long   ,0) ; break;
   case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN0(float  ,0) ; break;
   case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN0(double ,0) ; break;
+#ifndef LUNUM_API_NOCOMPLEX
   case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN0(Complex,0) ; break;
+#endif // LUNUM_API_COMPLEX
   }
 
   return A;
@@ -134,7 +143,9 @@ void array_binary_op(const struct Array *A, const struct Array *B,
     case ARRAY_TYPE_LONG    : EXPR_ADD(long   ) ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ADD(float  ) ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ADD(double ) ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ADD(Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
   case ARRAY_OP_SUB:
@@ -146,7 +157,9 @@ void array_binary_op(const struct Array *A, const struct Array *B,
     case ARRAY_TYPE_LONG    : EXPR_SUB(long   ) ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_SUB(float  ) ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_SUB(double ) ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_SUB(Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
   case ARRAY_OP_MUL:
@@ -158,7 +171,9 @@ void array_binary_op(const struct Array *A, const struct Array *B,
     case ARRAY_TYPE_LONG    : EXPR_MUL(long   ) ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_MUL(float  ) ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_MUL(double ) ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_MUL(Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
   case ARRAY_OP_DIV:
@@ -170,7 +185,9 @@ void array_binary_op(const struct Array *A, const struct Array *B,
     case ARRAY_TYPE_LONG    : EXPR_DIV(long   ) ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_DIV(float  ) ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_DIV(double ) ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_DIV(Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
   case ARRAY_OP_POW:
@@ -182,7 +199,9 @@ void array_binary_op(const struct Array *A, const struct Array *B,
     case ARRAY_TYPE_LONG    : EXPR_POW(long   ) ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_POW(float  ) ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_POW(double ) ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_COW(Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
   }
@@ -198,7 +217,9 @@ int array_sizeof(enum ArrayType T)
   case ARRAY_TYPE_LONG    : return sizeof(long);
   case ARRAY_TYPE_FLOAT   : return sizeof(float);
   case ARRAY_TYPE_DOUBLE  : return sizeof(double);
+#ifndef LUNUM_API_NOCOMPLEX
   case ARRAY_TYPE_COMPLEX : return sizeof(Complex);
+#endif // LUNUM_API_COMPLEX
   }
   return sizeof(int);
 }
@@ -216,7 +237,9 @@ void array_assign_from_scalar(struct Array *A, const void *val)
   case ARRAY_TYPE_LONG    : EXPR_ASSIGN1(long   , val) ; break;
   case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN1(float  , val) ; break;
   case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN1(double , val) ; break;
+#ifndef LUNUM_API_NOCOMPLEX
   case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN1(Complex, val) ; break;
+#endif // LUNUM_API_COMPLEX
   }
 }
 
@@ -237,7 +260,9 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(Bool, long)    ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(Bool, float)   ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(Bool, double)  ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(Bool, Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
 
@@ -250,7 +275,9 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(char, long)    ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(char, float)   ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(char, double)  ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(char, Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
 
@@ -263,7 +290,9 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(short, long)    ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(short, float)   ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(short, double)  ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(short, Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
 
@@ -276,7 +305,9 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(int, long)    ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(int, float)   ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(int, double)  ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(int, Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
 
@@ -289,7 +320,9 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(long, long)    ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(long, float)   ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(long, double)  ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(long, Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
 
@@ -302,7 +335,9 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(float, long)    ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(float, float)   ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(float, double)  ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(float, Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
 
@@ -315,10 +350,13 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(double, long)    ; break;
     case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(double, float)   ; break;
     case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(double, double)  ; break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(double, Complex) ; break;
+#endif // LUNUM_API_COMPLEX
     }
     break;
 
+#ifndef LUNUM_API_NOCOMPLEX
   case ARRAY_TYPE_COMPLEX:
     switch (B->dtype) {
     case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(Complex, Bool)    ; break;
@@ -331,7 +369,9 @@ void array_assign_from_array(struct Array *A, const struct Array *B)
     case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(Complex, Complex) ; break;
     }
     break;
+#endif // LUNUM_API_COMPLEX
   }
+
 }
 
 struct Array array_new_from_slice(const struct Array *B1,

@@ -30,6 +30,8 @@ void         *lunum_tovalue(lua_State *L, enum ArrayType T);
 typedef double complex Complex;
 Complex       lunum_checkcomplex(lua_State *L, int n);
 void          lunum_pushcomplex(lua_State *L, Complex z);
+#else
+typedef void Complex;
 #endif // LUNUM_API_COMPLEX
 
 #ifdef LUNUM_PRIVATE_API

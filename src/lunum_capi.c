@@ -78,13 +78,16 @@ void lunum_astable(lua_State *L, int pos)
     case ARRAY_TYPE_LONG    : lua_pushnumber   (L, ((long    *)a)[i]); break;
     case ARRAY_TYPE_FLOAT   : lua_pushnumber   (L, ((float   *)a)[i]); break;
     case ARRAY_TYPE_DOUBLE  : lua_pushnumber   (L, ((double  *)a)[i]); break;
+#ifndef LUNUM_API_NOCOMPLEX
     case ARRAY_TYPE_COMPLEX : lunum_pushcomplex(L, ((Complex *)a)[i]); break;
+#endif // LUNUM_API_NOCOMPLEX
     }
 
     lua_settable(L, -3);
   }
 }
 
+#ifndef LUNUM_API_NOCOMPLEX
 void lunum_pushcomplex(lua_State *L, Complex z)
 {
   Complex *w = (Complex*) lua_newuserdata(L, sizeof(Complex));
@@ -99,6 +102,7 @@ Complex lunum_checkcomplex(lua_State *L, int n)
   return *w;
 }
 
+#endif // LUNUM_API_NOCOMPLEX
 
 
 int lunum_upcast(lua_State *L, int pos, enum ArrayType T, int N)
@@ -177,6 +181,7 @@ int lunum_upcast(lua_State *L, int pos, enum ArrayType T, int N)
     return 1;
   }
 
+#ifndef LUNUM_API_NOCOMPLEX
   // Deal with lunum.complex
   // ---------------------------------------------------------------------------
   else if (lunum_hasmetatable(L, pos, "complex")) {
@@ -187,6 +192,7 @@ int lunum_upcast(lua_State *L, int pos, enum ArrayType T, int N)
     lunum_pusharray1(L, &A);
     return 1;
   }
+#endif // LUNUM_API_NOCOMPLEX
 
   // Throw an error
   // ---------------------------------------------------------------------------
@@ -211,7 +217,11 @@ int lunum_hasmetatable(lua_State *L, int pos, const char *name)
 
 void *lunum_tovalue(lua_State *L, enum ArrayType T)
 {
+#ifndef LUNUM_API_NOCOMPLEX
   Complex x=0.0;
+#else
+	double x=0.0;
+#endif // LUNUM_API_NOCOMPLEX
 
   if (lua_isnumber(L, -1)) {
     x = lua_tonumber(L, -1);
@@ -219,9 +229,11 @@ void *lunum_tovalue(lua_State *L, enum ArrayType T)
   else if (lua_isboolean(L, -1)) {
     x = lua_toboolean(L, -1);
   }
+#ifndef LUNUM_API_NOCOMPLEX
   else if (lunum_hasmetatable(L, -1, "complex")) {
     x = *((Complex*) lua_touserdata(L, -1));
   }
+#endif // LUNUM_API_NOCOMPLEX
   else {
     luaL_error(L, "unkown data type");
   }
@@ -236,7 +248,9 @@ void *lunum_tovalue(lua_State *L, enum ArrayType T)
   case ARRAY_TYPE_LONG    : *((long   *)y) = x; break;
   case ARRAY_TYPE_FLOAT   : *((float  *)y) = x; break;
   case ARRAY_TYPE_DOUBLE  : *((double *)y) = x; break;
+#ifndef LUNUM_API_NOCOMPLEX
   case ARRAY_TYPE_COMPLEX : *((Complex*)y) = x; break;
+#endif // LUNUM_API_NOCOMPLEX
   }
 
   return y;
