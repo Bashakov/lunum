@@ -291,3 +291,12 @@ precision is supported.
 Opens the binary file `fname` for reading, and returns a 1d array from
 the data. The file size must be a multiple of the data type `type`,
 which defaults to `double`.
+
+# Build
+
+## Windows
+
+On Windows you can build dynamic library using MSVC (tested on 2008).
+For this you should:
+* open and edit src/msvcbuild.bat, set paths to lua source, lib and exe,
+* open "Visual Studio Command Prompt" and run script.
