@@ -241,15 +241,15 @@ void *lunum_tovalue(lua_State *L, enum ArrayType T)
   void *y = malloc(array_sizeof(T));
 
   switch (T) {
-  case ARRAY_TYPE_BOOL    : *((Bool   *)y) = x; break;
-  case ARRAY_TYPE_CHAR    : *((char   *)y) = x; break;
-  case ARRAY_TYPE_SHORT   : *((short  *)y) = x; break;
-  case ARRAY_TYPE_INT     : *((int    *)y) = x; break;
-  case ARRAY_TYPE_LONG    : *((long   *)y) = x; break;
-  case ARRAY_TYPE_FLOAT   : *((float  *)y) = x; break;
-  case ARRAY_TYPE_DOUBLE  : *((double *)y) = x; break;
+  case ARRAY_TYPE_BOOL    : *((Bool   *)y) = (Bool   )x; break;
+  case ARRAY_TYPE_CHAR    : *((char   *)y) = (char   )x; break;
+  case ARRAY_TYPE_SHORT   : *((short  *)y) = (short  )x; break;
+  case ARRAY_TYPE_INT     : *((int    *)y) = (int    )x; break;
+  case ARRAY_TYPE_LONG    : *((long   *)y) = (long   )x; break;
+  case ARRAY_TYPE_FLOAT   : *((float  *)y) = (float  )x; break;
+  case ARRAY_TYPE_DOUBLE  : *((double *)y) = (double )x; break;
 #ifndef LUNUM_API_NOCOMPLEX
-  case ARRAY_TYPE_COMPLEX : *((Complex*)y) = x; break;
+  case ARRAY_TYPE_COMPLEX : *((Complex*)y) = (Complex)x; break;
 #endif // LUNUM_API_NOCOMPLEX
   }
 

@@ -764,7 +764,7 @@ int luaC_lunum_fromfile(lua_State *L)
 // -----------------------------------------------------------------------------
 {
   const char *fname = luaL_checkstring(L, 1);
-  const enum ArrayType T = luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
+  const enum ArrayType T = (ArrayType)luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
   const int sizeof_T = array_sizeof(T);
 
   FILE *input = fopen(fname, "rb");
@@ -789,8 +789,8 @@ int luaC_lunum_fromfile(lua_State *L)
 }
 
 
-#define EXPR_EVALF(T,N,x) {for(int i=0;i<N;++i)((T*)(x))[i]=f(((T*)(x))[i]);}
-#define EXPR_EVALG(T,N,x) {for(int i=0;i<N;++i)((T*)(x))[i]=g(((T*)(x))[i]);}
+#define EXPR_EVALF(T,N,x) {for(int i=0;i<N;++i)((T*)(x))[i]=(T)f(((T*)(x))[i]);}
+#define EXPR_EVALG(T,N,x) {for(int i=0;i<N;++i)((T*)(x))[i]=(T)g(((T*)(x))[i]);}
 
 void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cast)
 {

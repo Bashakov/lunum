@@ -16,12 +16,12 @@ typedef unsigned char Bool;
 #define EXPR_SUB(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]-((T*)b)[i];}
 #define EXPR_MUL(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]*((T*)b)[i];}
 #define EXPR_DIV(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]/((T*)b)[i];}
-#define EXPR_POW(T) {for(int i=0;i<N;++i)((T*)c)[i]= pow(((T*)a)[i],((T*)b)[i]);}
+#define EXPR_POW(T) {for(int i=0;i<N;++i)((T*)c)[i]=(T)pow((double)((T*)a)[i],(double)((T*)b)[i]);}
 #define EXPR_COW(T) {for(int i=0;i<N;++i)((T*)c)[i]=cpow(((T*)a)[i],((T*)b)[i]);}
 
 #define EXPR_ASSIGN0(T,val) {for(int i=0;i<N;++i)((T*)a)[i]=val;}
 #define EXPR_ASSIGN1(T,val) {for(int i=0;i<N;++i)((T*)a)[i]=*((T*)val);}
-#define EXPR_ASSIGN2(Ta,Tb) {for(int i=0;i<N;++i)((Ta*)a)[i]=((Tb*)b)[i];}
+#define EXPR_ASSIGN2(Ta,Tb) {for(int i=0;i<N;++i)((Ta*)a)[i]=(Ta)((Tb*)b)[i];}
 
 
 
@@ -56,7 +56,7 @@ enum ArrayType array_typeflag(char c)
   case 'z': return ARRAY_TYPE_COMPLEX;
 #endif // LUNUM_API_COMPLEX
   }
-  return -1; // indicates invalid type
+  return (ArrayType)-1; // indicates invalid type
 }
 
 
