@@ -3,9 +3,18 @@
 #define LUNUM_PRIVATE_API
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif // __cplusplus
+
 #include "lunum.h"
 #include "lauxlib.h"
 
+#ifdef __cplusplus
+} // extern "C"
+#endif // __cplusplus
 
 static int luaC_array_dtype(lua_State *L);
 static int luaC_array_shape(lua_State *L);

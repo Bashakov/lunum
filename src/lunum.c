@@ -4,10 +4,12 @@
 #include <string.h>
 #include <math.h>
 
+extern "C"
+{
 #include "lualib.h"
 #include "lauxlib.h"
+}
 #include "lunum.h"
-
 
 
 #define LUA_NEW_METAMETHOD(luastate, obj, funcname) {           \

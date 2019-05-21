@@ -3,6 +3,11 @@
 #ifndef __Array_HEADER__
 #define __Array_HEADER__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif // __cplusplus
+
 enum ArrayType {
   ARRAY_TYPE_BOOL,
   ARRAY_TYPE_CHAR,
@@ -47,5 +52,9 @@ int            array_sizeof(enum ArrayType T);
 int            array_resize(struct Array *A, const int *N, int Nd);
 void           array_extract_slice(struct Array *B0, const struct Array *B1,
 				   int *start, int *size, int *stride, int Nd);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif // __cplusplus
 
 #endif // __Array_HEADER__

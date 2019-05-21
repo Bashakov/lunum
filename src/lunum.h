@@ -4,7 +4,14 @@
 #define __NumluaCapi_HEADER__
 
 #include "numarray.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif // __cplusplus
+
 #include "lualib.h"
+
 
 typedef      unsigned char Bool;
 int luaopen_lunum(lua_State *L);
@@ -28,5 +35,9 @@ void          lunum_pushcomplex(lua_State *L, Complex z);
 #ifdef LUNUM_PRIVATE_API
 void         _lunum_register_array(lua_State *L, struct Array *B);
 #endif // LUNUM_PRIVATE_API
+
+#ifdef __cplusplus
+} // extern "C"
+#endif // __cplusplus
 
 #endif // __NumluaCapi_HEADER__

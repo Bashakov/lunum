@@ -6,7 +6,18 @@
 
 #define LUNUM_PRIVATE_API
 #include "lunum.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif // __cplusplus
+
+#include "lua.h"
 #include "lauxlib.h"
+
+#ifdef __cplusplus
+} // extern "C"
+#endif // __cplusplus
 
 
 void lunum_pusharray1(lua_State *L, struct Array *B)
